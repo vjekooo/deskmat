@@ -29,9 +29,22 @@
 		5EB35D492FA9212C00F7AB5D /* deskmatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = deskmatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5E8BAB6C2FAA284B002F19B4 /* Exceptions for "deskmat" folder in "deskmat" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5EB35D2C2FA9212B00F7AB5D /* deskmat */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5EB35D2F2FA9212B00F7AB5D /* deskmat */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5E8BAB6C2FAA284B002F19B4 /* Exceptions for "deskmat" folder in "deskmat" target */,
+			);
 			path = deskmat;
 			sourceTree = "<group>";
 		};
@@ -415,8 +428,10 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = deskmat/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Deskmat;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -462,8 +477,10 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = deskmat/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Deskmat;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
