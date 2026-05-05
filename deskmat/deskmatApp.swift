@@ -32,23 +32,11 @@ struct deskmatApp: App {
         .windowResizability(.contentMinSize)
  
         MenuBarExtra("Deskmat", systemImage: "photo.on.rectangle") {
-            MenuBarButtons()
+            ContentView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .frame(width: 500, height: 300)
         }
-    }
-}
- 
-struct MenuBarButtons: View {
-    var body: some View {
-        Button("Open Deskmat") {
-            if let url = URL(string: "deskmat://main") {
-                NSWorkspace.shared.open(url)
-            }
-            NSApp.activate(ignoringOtherApps: true)
-        }
-        Divider()
-        Button("Quit") {
-            NSApp.terminate(nil)
-        }
+        .menuBarExtraStyle(.window)
     }
 }
 
