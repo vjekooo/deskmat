@@ -3,5 +3,6 @@ Type a search query, hit refresh, and a random matching wallpaper fills the wind
 Search supports natural input — commas, spaces, and "and" all work as tag separators. Your last query is remembered between sessions so the app picks up where you left off on launch.
 Built with SwiftUI. No accounts, no tracking, no clutter.
 
-<img width="1200" height="776" alt="desktmat2x" src="https://github.com/user-attachments/assets/f8f67b0d-e63d-41fc-ba5b-7950f1c45585" />
+<img width="1728" height="1117" alt="deskmat" src="https://github.com/user-attachments/assets/88a9df7d-d129-4e28-b2ed-75584c59b214" />
+
 
