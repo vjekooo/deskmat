@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5E2314F82FAA6F790007945B /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5E2314F72FAA6F790007945B /* Secrets.xcconfig */; };
+		5E2314FB2FAA702E0007945B /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5E2314F92FAA702E0007945B /* Secrets.xcconfig */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		5EB35D402FA9212C00F7AB5D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +29,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5E2314F72FAA6F790007945B /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Secrets.xcconfig; path = Config/Secrets.xcconfig; sourceTree = "<group>"; };
+		5E2314F92FAA702E0007945B /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		5EB35D2D2FA9212B00F7AB5D /* deskmat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deskmat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EB35D3F2FA9212C00F7AB5D /* deskmatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = deskmatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EB35D492FA9212C00F7AB5D /* deskmatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = deskmatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,9 +92,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E2314FA2FAA702E0007945B /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				5E2314F92FAA702E0007945B /* Secrets.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		5EB35D242FA9212B00F7AB5D = {
 			isa = PBXGroup;
 			children = (
+				5E2314FA2FAA702E0007945B /* Config */,
 				5EB35D2F2FA9212B00F7AB5D /* deskmat */,
 				5EB35D422FA9212C00F7AB5D /* deskmatTests */,
 				5EB35D4C2FA9212C00F7AB5D /* deskmatUITests */,
@@ -99,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				5EB35D2D2FA9212B00F7AB5D /* deskmat.app */,
+				5E2314F72FAA6F790007945B /* Secrets.xcconfig */,
 				5EB35D3F2FA9212C00F7AB5D /* deskmatTests.xctest */,
 				5EB35D492FA9212C00F7AB5D /* deskmatUITests.xctest */,
 			);
@@ -225,6 +242,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E2314F82FAA6F790007945B /* Secrets.xcconfig in Resources */,
+				5E2314FB2FAA702E0007945B /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,6 +303,7 @@
 /* Begin XCBuildConfiguration section */
 		5EB35D512FA9212C00F7AB5D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5E2314F72FAA6F790007945B /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -348,6 +368,7 @@
 		};
 		5EB35D522FA9212C00F7AB5D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5E2314F72FAA6F790007945B /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -439,6 +460,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = vjeko.deskmat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -488,6 +510,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = vjeko.deskmat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;

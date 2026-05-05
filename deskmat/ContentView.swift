@@ -1,27 +1,5 @@
-//
-//  ContentView.swift
-//  deskmat
-//
-//  Created by Vjeko on 04.05.2026..
-//
 import SwiftUI
 import AppKit
-
-struct WallpaperResult: Identifiable, Codable {
-    let id: String
-    let path: String
-    let thumbs: Thumbs
-
-    struct Thumbs: Codable {
-        let large: String
-        let original: String
-        let small: String
-    }
-}
-
-struct WallhavenResponse: Codable {
-    let data: [WallpaperResult]
-}
 
 struct InstantTooltip: ViewModifier {
     let text: String
@@ -57,25 +35,22 @@ extension View {
 }
 
 struct ContentView: View {
-    @AppStorage("lastQuery") private var query: String = ""
-    @State private var current: WallpaperResult? = nil
-    @State private var isLoading: Bool = false
-    @State private var errorMessage: String? = nil
-    @AppStorage("lastSearch") private var showSearch: Bool = true
+
+    @StateObject private var vm = WallpaperViewModel()
 
     init(previewWallpaper: WallpaperResult? = nil) {
-        _current = State(initialValue: previewWallpaper)
+        _vm = StateObject(wrappedValue: WallpaperViewModel(previewWallpaper: previewWallpaper))
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            // Full-screen image
-            if let wallpaper = current {
+            if let wallpaper = vm.current {
+
                 AsyncImage(url: URL(string: wallpaper.path)) { phase in
                     switch phase {
                     case .empty:
                         ProgressView()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
                     case .success(let image):
                         GeometryReader { geo in
                             image
@@ -84,174 +59,112 @@ struct ContentView: View {
                                 .frame(width: geo.size.width, height: geo.size.height)
                                 .clipped()
                         }
+
                     case .failure:
-                        VStack(spacing: 8) {
+                        VStack {
                             Image(systemName: "photo")
-                                .font(.largeTitle)
-                                .foregroundColor(.secondary)
                             Text("Failed to load image")
-                                .foregroundColor(.secondary)
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+
                     @unknown default:
                         EmptyView()
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if !isLoading {
+
+            } else if vm.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
                 Text("Type in a query and hit Enter or press Refresh")
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
-            // Bottom search bar overlay
-            HStack(spacing: 10) {
-                TextField("Search example: 'night sky'", text: $query)
-                    .textFieldStyle(.roundedBorder)
-                    .onSubmit { fetchWallpapers() }
-                    .opacity(showSearch ? 1 : 0)
-                    .disabled(!showSearch)
-                    .frame(width: showSearch ? nil : 0)
-                
-                Button(action: toggleSearch) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 16, weight: .semibold))
-                }
-                .instantTooltip("Toggle search")
+            VStack {
+                HStack {
+                    Menu(vm.imageSource == .wallhaven ? "Wallhaven" : "Unsplash") {
+                        Button("Wallhaven") { vm.imageSource = .wallhaven }
+                        Button("Unsplash") { vm.imageSource = .unsplash }
+                    }
+                    .menuStyle(.borderlessButton)
+                    .padding(8)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    Spacer()
 
-                Button(action: fetchWallpapers) {
+                    Button(action: vm.openInBrowser) {
+                        Image(systemName: "safari")
+                            .font(.system(size: 16, weight: .semibold))
+                    }
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    .help("Open image in browser")
+                    .disabled(vm.current == nil)
+                }
+                .padding(12)
+                .padding(.horizontal)
+                .padding(.top, 20)
+
+                Spacer()
+            }
+        
+            HStack {
+                if vm.imageSource == .wallhaven {
+                    TextField("Search example: 'night sky'", text: $vm.query)
+                        .textFieldStyle(.roundedBorder)
+                        .onSubmit { vm.fetch() }
+                        .opacity(vm.showSearch ? 1 : 0)
+                        .disabled(!vm.showSearch)
+                        .frame(width: vm.showSearch ? nil : 0)
+                    
+                    Button {
+                        vm.toggleSearch()
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
+                    .help("Toggle search bar")
+                }
+
+                Button {
+                    vm.fetch()
+                } label: {
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 16, weight: .semibold))
                 }
-                .instantTooltip("Fetch new wallpaper")
-                .disabled(isLoading)
+                .help("Fetch new image")
+                .disabled(vm.isLoading)
 
-                Button(action: setAsWallpaper) {
+                Button {
+                    vm.setAsWallpaper()
+                } label: {
                     Image(systemName: "desktopcomputer")
-                        .font(.system(size: 16, weight: .semibold))
                 }
-                .instantTooltip("Set as desktop wallpaper")
-                .disabled(current == nil || isLoading)
+                .help("Set image as wallpaper")
+                .disabled(vm.current == nil)
             }
             .padding(12)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
             .padding()
             .frame(maxWidth: .infinity, alignment: .trailing)
-            .animation(.easeInOut(duration: 0.2), value: showSearch)
+            .animation(.easeInOut(duration: 0.2), value: vm.showSearch)
+            
+            if vm.errorMessage != nil {
+                VStack {
+                    Spacer()
+
+                    Text(vm.errorMessage ?? "")
+                        .font(.caption)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .padding(.bottom, 20)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+                .animation(.easeInOut, value: vm.errorMessage)
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .clipped()
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                if current == nil && !query.isEmpty {
-                    fetchWallpapers()
-                }
-            }
+            vm.onAppear()
         }
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: openInBrowser) {
-                    Image(systemName: "safari")
-                        .font(.system(size: 16, weight: .semibold))
-                }
-                .help("Open image in browser")
-                .disabled(current == nil)
-            }
+        .onChange(of: vm.imageSource) { _ in
+            vm.fetch()
         }
-        .toolbar(.visible, for: .windowToolbar)
     }
-    
-    private func openInBrowser() {
-        guard let urlString = current?.path, let url = URL(string: urlString) else { return }
-        NSWorkspace.shared.open(url)
-    }
-    
-    private func toggleSearch() {
-      showSearch = !showSearch
-    }
-
-    private func setAsWallpaper() {
-        guard let urlString = current?.path, let url = URL(string: urlString) else { return }
-
-        // Download the image to a temp file then set it
-        URLSession.shared.downloadTask(with: url) { localURL, _, error in
-            guard let localURL = localURL, error == nil else { return }
-
-            // Use unique filename each time to avoid stale file lock
-            let dest = FileManager.default.temporaryDirectory
-                .appendingPathComponent("deskmat_\(UUID().uuidString).jpg")
-            try? FileManager.default.moveItem(at: localURL, to: dest)
-
-            DispatchQueue.main.async {
-                let workspace = NSWorkspace.shared
-                let screens = NSScreen.screens
-                for screen in screens {
-                    try? workspace.setDesktopImageURL(dest, for: screen, options: [:])
-                }
-            }
-        }.resume()
-    }
-
-    private func normalizeQuery(_ raw: String) -> String {
-        let tokens = raw
-            .components(separatedBy: CharacterSet(charactersIn: ",").union(.whitespaces))
-            .flatMap { $0.components(separatedBy: " and ") }
-            .map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
-            .filter { !$0.isEmpty && $0 != "and" }
-        return tokens.joined(separator: "+")
-    }
-
-    private func fetchWallpapers() {
-        let normalized = normalizeQuery(query)
-        guard !normalized.isEmpty else { return }
-
-        var components = URLComponents(string: "https://wallhaven.cc/api/v1/search")!
-        components.queryItems = [
-            URLQueryItem(name: "q", value: normalized),
-            URLQueryItem(name: "categories", value: "110"),
-            URLQueryItem(name: "purity", value: "100"),
-            URLQueryItem(name: "sorting", value: "random"),
-            URLQueryItem(name: "order", value: "desc")
-        ]
-
-        guard let url = components.url else { return }
-
-        isLoading = true
-        errorMessage = nil
-        current = nil
-
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            DispatchQueue.main.async {
-                isLoading = false
-
-                if let error = error {
-                    errorMessage = error.localizedDescription
-                    return
-                }
-
-                guard let data = data else {
-                    errorMessage = "No data received."
-                    return
-                }
-
-                do {
-                    let decoded = try JSONDecoder().decode(WallhavenResponse.self, from: data)
-                    current = decoded.data.randomElement()
-                } catch {
-                    errorMessage = "Failed to decode response: \(error.localizedDescription)"
-                }
-            }
-        }.resume()
-    }
-}
-
-#Preview {
-    ContentView(previewWallpaper: WallpaperResult(
-        id: "1",
-        path: "https://w.wallhaven.cc/full/85/wallhaven-85r992.jpg",
-        thumbs: .init(large: "", original: "", small: "")
-    ))
 }
