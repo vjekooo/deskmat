@@ -17,5 +17,7 @@ struct deskmatApp: App {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
+        .defaultSize(width: 300, height: 200)
+        .windowResizability(.contentMinSize)
     }
 }
