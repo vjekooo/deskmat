@@ -96,6 +96,8 @@ struct ContentView: View {
                     }
                     .menuStyle(.borderlessButton)
                     .padding(8)
+                    .buttonStyle(.plain)
+                    .focusable(false)
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                     Spacer()
 
@@ -141,6 +143,7 @@ struct ContentView: View {
                     } label: {
                         Image(systemName: "magnifyingglass")
                     }
+                    .focusable(false)
                     .help("Toggle search bar")
                 }
                 
@@ -153,6 +156,7 @@ struct ContentView: View {
                 }
                 .help("Fetch new image")
                 .disabled(vm.isLoading)
+                .focusable(false)
 
                 Button {
                     vm.setAsWallpaper()
@@ -161,6 +165,7 @@ struct ContentView: View {
                 }
                 .help("Set image as wallpaper")
                 .disabled(vm.current == nil)
+                .focusable(false)
             }
             .padding(12)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
