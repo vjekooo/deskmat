@@ -27,7 +27,6 @@ struct WallpaperService {
     static func fetchUnsplash(query: String) async throws -> WallpaperResult {
         var components = URLComponents(string: "https://api.unsplash.com/photos/random")!
         components.queryItems = [
-            URLQueryItem(name: "query", value: query),
             URLQueryItem(name: "client_id", value: unsplashKey)
         ]
         guard let url = components.url else { throw NSError(domain: "Invalid URL", code: 0) }

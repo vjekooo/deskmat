@@ -125,8 +125,10 @@ struct ContentView: View {
                         .background(.ultraThinMaterial, in: Capsule())
                         .padding(.bottom, 20)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .buttonStyle(.plain)
                 }
                 .buttonStyle(.plain)
+                .focusable(false)
             }
         
             HStack {
@@ -147,8 +149,6 @@ struct ContentView: View {
                     .help("Toggle search bar")
                 }
                 
-                
-
                 Button {
                     vm.fetch()
                 } label: {
