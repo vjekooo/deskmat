@@ -49,7 +49,7 @@ struct ContentView: View {
                 AsyncImage(url: URL(string: wallpaper.path)) { phase in
                     switch phase {
                     case .empty:
-                        ProgressView()
+                        Text("")
 
                     case .success(let image):
                         GeometryReader { geo in
@@ -72,8 +72,16 @@ struct ContentView: View {
                 }
 
             } else if vm.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 Text("Type in a query and hit Enter or press Refresh")
                     .foregroundColor(.secondary)

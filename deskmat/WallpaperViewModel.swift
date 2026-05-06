@@ -31,30 +31,24 @@ final class WallpaperViewModel: ObservableObject {
 
     func fetch() {
         guard !normalizeQuery(query).isEmpty else { return }
-
-        switch imageSource {
-        case .wallhaven:
-            WallpaperService.fetchWallhaven(query: normalizeQuery(query)) { [weak self] result in
-                self?.handle(result)
-            }
-
-        case .unsplash:
-            WallpaperService.fetchUnsplash(query: normalizeQuery(query)) { [weak self] result in
-                self?.handle(result)
-            }
-        }
-    }
-
-    private func handle(_ result: Result<WallpaperResult, Error>) {
-        DispatchQueue.main.async {
-            self.isLoading = false
-
-            switch result {
-            case .success(let wallpaper):
-                self.current = wallpaper
-
-            case .failure(let error):
-                self.showErrorMessage(error.localizedDescription)
+        isLoading = true
+        Task {
+            do {
+                let result = switch imageSource {
+                case .wallhaven:
+                    try await WallpaperService.fetchWallhaven(query: normalizeQuery(query))
+                case .unsplash:
+                    try await WallpaperService.fetchUnsplash(query: normalizeQuery(query))
+                }
+                await MainActor.run {
+                    self.current = result
+                    self.isLoading = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.isLoading = false
+                    self.showErrorMessage(error.localizedDescription)
+                }
             }
         }
     }
