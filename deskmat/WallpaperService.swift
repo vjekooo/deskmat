@@ -1,6 +1,10 @@
 import Foundation
 
 struct WallpaperService {
+    
+    static var unsplashKey: String {
+        Bundle.main.object(forInfoDictionaryKey: "UNSPLASH_ACCESS_KEY") as? String ?? ""
+    }
 
     static func fetchWallhaven(query: String, completion: @escaping (Result<WallpaperResult, Error>) -> Void) {
 
@@ -41,11 +45,9 @@ struct WallpaperService {
 
     static func fetchUnsplash(query: String, completion: @escaping (Result<WallpaperResult, Error>) -> Void) {
 
-        let key = Bundle.main.object(forInfoDictionaryKey: "UNSPLASH_ACCESS_KEY") as? String ?? ""
-
         var components = URLComponents(string: "https://api.unsplash.com/photos/random")!
         components.queryItems = [
-            URLQueryItem(name: "client_id", value: key)
+            URLQueryItem(name: "client_id", value: unsplashKey)
         ]
 
         guard let url = components.url else { return }
@@ -93,7 +95,9 @@ struct WallpaperService {
                 let result = WallpaperResult(
                     id: decoded.id,
                     path: decoded.urls.full,
-                    download_location: decoded.links.download_location
+                    download_location: decoded.links.download_location,
+                    user: decoded.user.name,
+                    userLink: decoded.user.links.html
                 )
 
                 completion(.success(result))
@@ -107,11 +111,14 @@ struct WallpaperService {
     }
     
     static func trackUnsplashDownload(location: String) {
-        guard let url = URL(string: location) else { return }
+        guard var components = URLComponents(string: location) else { return }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+        components.queryItems = [
+            URLQueryItem(name: "client_id", value: unsplashKey)
+        ]
 
-        URLSession.shared.dataTask(with: request).resume()
+        guard let url = components.url else { return }
+        
+        URLSession.shared.dataTask(with: url).resume()
     }
 }

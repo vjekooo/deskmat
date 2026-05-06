@@ -105,6 +105,19 @@ struct ContentView: View {
 
                 Spacer()
             }
+            
+            if vm.imageSource == .unsplash {
+                Link(destination: URL(string: vm.current?.userLink ?? "https://unsplash.com")!) {
+                    Text("Photo by " + (vm.current?.user ?? "Unknown"))
+                        .font(.caption)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .padding(.bottom, 20)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+                .buttonStyle(.plain)
+            }
         
             HStack {
                 if vm.imageSource == .wallhaven {
@@ -122,6 +135,8 @@ struct ContentView: View {
                     }
                     .help("Toggle search bar")
                 }
+                
+                
 
                 Button {
                     vm.fetch()

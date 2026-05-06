@@ -71,8 +71,10 @@ final class WallpaperViewModel: ObservableObject {
         
         if imageSource == .unsplash,
            let photo = current {
+            
+            guard let location = photo.download_location else { return }
 
-            WallpaperService.trackUnsplashDownload(location: photo.download_location!)
+            WallpaperService.trackUnsplashDownload(location: location)
         }
 
         guard let urlString = current?.path,
