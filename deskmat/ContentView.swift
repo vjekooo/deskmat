@@ -1,6 +1,23 @@
 import SwiftUI
 import AppKit
 
+struct SpinningArc: View {
+    @State private var rotate = false
+
+    var body: some View {
+        Circle()
+            .trim(from: 0.2, to: 1)
+            .stroke(Color.white.opacity(0.7), style: StrokeStyle(lineWidth: 4, lineCap: .round))
+            .frame(width: 40, height: 40)
+            .rotationEffect(.degrees(rotate ? 360 : 0))
+            .animation(
+                .linear(duration: 1).repeatForever(autoreverses: false),
+                value: rotate
+            )
+            .onAppear { rotate = true }
+    }
+}
+
 struct InstantTooltip: ViewModifier {
     let text: String
     @State private var isHovering = false
@@ -70,24 +87,20 @@ struct ContentView: View {
                         EmptyView()
                     }
                 }
-
-            } else if vm.isLoading {
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 Text("Type in a query and hit Enter or press Refresh")
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-
+            
+            if vm.isLoading {
+                VStack {
+                    Spacer()
+                    SpinningArc()
+                    Spacer()
+                }
+            }
+            
             VStack {
                 HStack {
                     Menu(vm.imageSource == .wallhaven ? "Wallhaven" : "Unsplash") {
